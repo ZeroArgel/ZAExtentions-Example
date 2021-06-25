@@ -5,17 +5,25 @@
     using System.Collections.Generic;
     using ZAExtensions;
     using static ZAExtensions.ToEnums;
+    using ZAExtentions_Example.Models;
+
     class Program
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("");
+            var jsonProduct = "product".ToXml<Product>("/Table/Product");
+            foreach (var json in jsonProduct)
+            {
+                Console.WriteLine($"Product id: { json.Product_id }");
+                Console.WriteLine($"Product name: { json.Product_name }");
+                Console.WriteLine($"Product price: { json.Product_price }");
+            }
             //ToConversions();
             //ToEncrypts();
             //ToEnums();
             //ToManyExtensions();
             //ToJsons();
-            StandardReturn();
+            //StandardReturn();
             //ToTokens();
         }
         static void ToConnectionApi()
@@ -149,6 +157,10 @@
         }
         #endregion
         #region ToTokens
+        static void ToTokens()
+        {
+
+        }
         #endregion
     }
 }
