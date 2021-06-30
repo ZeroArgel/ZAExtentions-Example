@@ -6,28 +6,46 @@
     using ZAExtensions;
     using static ZAExtensions.ToEnums;
     using ZAExtentions_Example.Models;
+    using System.Linq.Expressions;
 
     class Program
     {
         static void Main(string[] args)
         {
-            var jsonProduct = "product".ToXml<Product>("/Table/Product");
-            foreach (var json in jsonProduct)
+            var option = "0";
+            while (option != "-1")
             {
-                Console.WriteLine($"Product id: { json.Product_id }");
-                Console.WriteLine($"Product name: { json.Product_name }");
-                Console.WriteLine($"Product price: { json.Product_price }");
+                Console.WriteLine("Test ZA Extentions.\nSelect one option from next menu:");
+                Console.WriteLine("1.- Conversions.");
+                Console.WriteLine("2.- Encrypts.");
+                Console.WriteLine("3.- Enums.");
+                Console.WriteLine("4.- Many Extensions.");
+                Console.WriteLine("5.- Jsons.");
+                Console.WriteLine("6.- Xml.");
+                Console.WriteLine("7.- Standard Return.");
+                Console.WriteLine("8.- Tokens.");
+                Console.WriteLine("9.- Validate.");
+                Console.WriteLine("0.- Exit.");
+
+                option = Console.ReadLine();
+                Console.Clear();
+                switch (option)
+                {
+                    case "0": option = "-1"; break;
+                    case "1": ToConversions(); break;
+                    case "2": ToEncrypts(); break;
+                    case "3": ToEnums(); break;
+                    case "4": ToManyExtensions(); break;
+                    case "5": ToJsons(); break;
+                    case "6": ToXml(); break;
+                    case "7": ToStandardReturn(); break;
+                    case "8": ToTokens(); break;
+                    case "9": ToValidate(); break;
+                    default:
+                        Console.WriteLine("This option is not valid.\n");
+                        break;
+                }
             }
-            //ToConversions();
-            //ToEncrypts();
-            //ToEnums();
-            //ToManyExtensions();
-            //ToJsons();
-            //StandardReturn();
-            //ToTokens();
-        }
-        static void ToConnectionApi()
-        {
         }
         #region All methods for conversion.
         static void ToConversions()
@@ -143,8 +161,21 @@
             Console.WriteLine($"Serialize/Deserialize ExampleModel: { new ExampleModel(2, "Hola").ToSerializeDeserialize<ExampleModel, ExampleModelJson>() }");
         }
         #endregion
+        #region ToXml
+        static void ToXml()
+        {
+            // name of xml, Path of node, path of file
+            var jsonProduct = "product".XmlToModel<Product>("/Table/Product");
+            foreach (var json in jsonProduct)
+            {
+                Console.WriteLine($"Product id: { json.Product_id }");
+                Console.WriteLine($"Product name: { json.Product_name }");
+                Console.WriteLine($"Product price: { json.Product_price }");
+            }
+        }
+        #endregion
         #region Methods to standard return.
-        static void StandardReturn()
+        static void ToStandardReturn()
         {
             var tROk = new ExampleModel(1, "Test").TROk();
             var tRBad = "Error".TRBad();
@@ -159,7 +190,58 @@
         #region ToTokens
         static void ToTokens()
         {
+            // 1 hr = 8b12507783d5becacbf2ebe5b01a60024d8728a8f86dcc818bce699e8b3320bc.
+            // 3 hrs = 926f52d1c1e19c0c58a7d39bf234a0d239352f5acfa26c73989d9c3845614999.
+            // 6 hrs = 58ea8edc90ea4f1e39f30ab1a1962f28d21d57a6105c59145cd227334022ccb2.
+            // 12 hrs = b9e0b590c2192611106bfdf29ef7418963bad9ee895be4fc12599ed3d54402d6.
+            // 24 = 34365a00b569241c83dcf67cc0b827b6a1851e764cf60e2d2c8276a9c9907465.
+            // Without hrs = 5c49aa59cdbb87de16edade5865b6d91ddeaec56ebd03df79bbd775e218c1f2c
+            var id = Guid.NewGuid();
+            var validateHr = "8b12507783d5becacbf2ebe5b01a60024d8728a8f86dcc818bce699e8b3320bc";
+            var token = id.ToToken();
+            Console.WriteLine($"id: { id }, Token: { token }");
+            Console.WriteLine($"Validate: { token.ToValidate(validateHr) }");
+        }
+        #endregion
+        #region ToValidate
+        static void ToValidate()
+        {
+            try
+            {
+                var test = "";
+                var testNumber = 3.3;
+                var isGuid = test.IsGuid();
+                var isLong = test.IsLong();
+                var isInt = test.IsInt();
+                var isBool = test.IsBool();
+                var isEmpty = test.IsEmpty();
+                var isNumeric = test.IsNumeric();
+                var isDecimal = test.IsDecimal(Cultures.ES_MX);
+                var isGreaterThan = testNumber.IsGreaterThan(7.0);
+                var isLowerThan = testNumber.IsLowerThan(3.0);
 
+                Console.WriteLine($"variable test: { test }");
+                Console.WriteLine($"IsGuid: { isGuid }");
+                Console.WriteLine($"IsLong: { isLong }");
+                Console.WriteLine($"IsInt: { isInt }");
+                Console.WriteLine($"IsBool: { isBool }");
+                Console.WriteLine($"IsEmpty: { isEmpty }");
+                Console.WriteLine($"IsNumeric: { isNumeric }");
+                Console.WriteLine($"IsDecimal: { isDecimal }");
+                Console.WriteLine($"IsGreaterThan: { isGreaterThan }");
+                Console.WriteLine($"IsLowerThan: { isLowerThan }");
+
+                // this validate are especials because if not is the correct value then return a exception.
+                var isDecimalMessage = testNumber.ToString().IsDecimal($"variable testNumber, isn't decimal", Cultures.ES_MX);
+                Console.WriteLine($"IsDecimal w/message: { isDecimalMessage }");
+
+                var isEmptyMessage = test.IsEmpty($"variable test, isn't empty");
+                Console.WriteLine($"IsEmpty w/message: { isEmptyMessage }");
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine($"{ ex.Message }");
+            }
         }
         #endregion
     }

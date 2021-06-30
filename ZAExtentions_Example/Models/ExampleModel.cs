@@ -1,4 +1,4 @@
-﻿namespace ZAExtentions_Example
+﻿namespace ZAExtentions_Example.Models
 {
     public class ExampleModel
     {
